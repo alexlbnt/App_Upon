@@ -5,8 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+
+import { api } from "../services/api";
 
 type Category = {
   id: number;
@@ -16,37 +19,41 @@ type Category = {
   totalItems: number;
 };
 
-type Props = {
-  data: Category[];
-};
-
-export default function CategoryList({ data }: Props) {
+export default function CategoriesScreen() {
   const navigation = useNavigation<any>();
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    api.get("/categories").then((response) => {
+      setCategories(response.data);
+    });
+  }, []);
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.title}>Estabelecimentos</Text>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Categories")}
-        >
-          <Ionicons name="chevron-forward" size={22} color="#9CA3AF" />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
+
+        <Text style={styles.title}>Categorias</Text>
+
+        <View style={{ width: 24 }} />
       </View>
 
-      {/* Lista */}
+      {/* GRID */}
       <FlatList
-        data={data}
-        horizontal
-        showsHorizontalScrollIndicator={false}
+        data={categories}
         keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={{ paddingRight: 16 }}
+        numColumns={2}
+        columnWrapperStyle={{ justifyContent: "space-between" }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.card, { backgroundColor: item.color }]}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
             onPress={() =>
               navigation.navigate("Establishments", {
                 categoryId: item.id,
@@ -56,13 +63,13 @@ export default function CategoryList({ data }: Props) {
           >
             <Ionicons
               name={item.icon as any}
-              size={26}
+              size={34}
               color="#fff"
-              style={{ marginBottom: 6 }}
+              style={{ marginBottom: 10 }}
             />
 
             <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.items}>{item.totalItems} Itens</Text>
+            <Text style={styles.items}>{item.totalItems} Estabelecimentos</Text>
           </TouchableOpacity>
         )}
       />
@@ -74,13 +81,15 @@ export default function CategoryList({ data }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 24,
+    flex: 1,
+    backgroundColor: "#F9FAFB",
+    paddingHorizontal: 16,
   },
   header: {
+    height: 56,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 18,
@@ -88,21 +97,21 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
   card: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    padding: 14,
+    width: "48%",
+    height: 150,
+    borderRadius: 20,
+    padding: 16,
     justifyContent: "flex-end",
-    marginRight: 12,
+    marginBottom: 16,
   },
   name: {
     color: "#fff",
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "600",
   },
   items: {
     color: "#E5E7EB",
     fontSize: 12,
-    marginTop: 2,
+    marginTop: 4,
   },
 });
