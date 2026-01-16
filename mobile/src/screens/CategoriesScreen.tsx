@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -5,10 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
+import { useNavigation } from "@react-navigation/native";
 import { api } from "../services/api";
 
 type Category = {
@@ -31,22 +30,21 @@ export default function CategoriesScreen() {
 
   return (
     <View style={styles.container}>
-      {/* HEADER */}
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
 
         <Text style={styles.title}>Categorias</Text>
-
         <View style={{ width: 24 }} />
       </View>
 
-      {/* GRID */}
+      {/* Grid */}
       <FlatList
         data={categories}
-        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
+        keyExtractor={(item) => item.id.toString()}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
@@ -63,9 +61,9 @@ export default function CategoriesScreen() {
           >
             <Ionicons
               name={item.icon as any}
-              size={34}
+              size={36}
               color="#fff"
-              style={{ marginBottom: 10 }}
+              style={{ marginBottom: 12 }}
             />
 
             <Text style={styles.name}>{item.name}</Text>
@@ -82,23 +80,23 @@ export default function CategoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
     backgroundColor: "#F9FAFB",
-    paddingHorizontal: 16,
   },
   header: {
-    height: 56,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 24,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "600",
     color: "#111827",
   },
   card: {
     width: "48%",
-    height: 150,
+    height: 160,
     borderRadius: 20,
     padding: 16,
     justifyContent: "flex-end",

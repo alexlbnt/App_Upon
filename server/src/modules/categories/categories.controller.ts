@@ -1,9 +1,14 @@
+import { Controller, Get, Param } from "@nestjs/common";
+import { EstablishmentsService } from "../establishments/establishments.service";
+
 @Controller("categories")
 export class CategoriesController {
-  constructor(private readonly service: CategoriesService) {}
+  constructor(
+    private readonly establishmentsService: EstablishmentsService,
+  ) {}
 
-  @Get()
-  findAll() {
-    return this.service.findAll();
+  @Get(":categoryId/establishments")
+  findEstablishments(@Param("categoryId") categoryId: string) {
+    return this.establishmentsService.findByCategory(categoryId);
   }
 }

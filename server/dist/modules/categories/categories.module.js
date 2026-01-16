@@ -6,21 +6,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.CategoriesModule = void 0;
 const common_1 = require("@nestjs/common");
-const categories_module_1 = require("./modules/categories/categories.module");
-const establishments_module_1 = require("./modules/establishments/establishments.module");
-const products_module_1 = require("./modules/products/products.module");
-let AppModule = class AppModule {
+const typeorm_1 = require("@nestjs/typeorm");
+const category_entity_1 = require("./category.entity");
+const categories_controller_1 = require("./categories.controller");
+const establishments_module_1 = require("../establishments/establishments.module");
+let CategoriesModule = class CategoriesModule {
 };
-exports.AppModule = AppModule;
-exports.AppModule = AppModule = __decorate([
+exports.CategoriesModule = CategoriesModule;
+exports.CategoriesModule = CategoriesModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            categories_module_1.CategoriesModule,
+            typeorm_1.TypeOrmModule.forFeature([category_entity_1.Category]),
             establishments_module_1.EstablishmentsModule,
-            products_module_1.ProductsModule,
         ],
+        controllers: [categories_controller_1.CategoriesController],
     })
-], AppModule);
-//# sourceMappingURL=app.module.js.map
+], CategoriesModule);
+//# sourceMappingURL=categories.module.js.map

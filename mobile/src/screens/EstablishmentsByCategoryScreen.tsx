@@ -1,39 +1,100 @@
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
-import { colors } from "../theme/colors";
+import { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { api } from "../services/api";
+import { colors } from "../theme/colors";
 
-const establishments = [
-  { id: "1", name: "Mercado do Zé" },
-  { id: "2", name: "Mercado Central" },
-  { id: "3", name: "Supermercado Prime" },
-  { id: "4", name: "Mercado Preço Baixo" },
-];
+type Establishment = {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  distance: string;
+  isOpen: boolean;
+};
 
 export default function EstablishmentsByCategoryScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
+  const { categoryId, title } = route.params;
 
-  const { categoryName } = route.params;
+  const [establishments, setEstablishments] = useState<Establishment[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get(`/establishments/by-category/${categoryId}`)
+      .then((response) => {
+        setEstablishments(response.data);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{categoryName}</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="#111827" />
+        </TouchableOpacity>
 
+        <Text style={styles.title}>{title}</Text>
+        <View style={{ width: 24 }} />
+      </View>
+
+      {/* Lista */}
       <FlatList
         data={establishments}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ gap: 16 }}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
+            activeOpacity={0.85}
             onPress={() =>
               navigation.navigate("Establishment", {
                 establishmentId: item.id,
               })
             }
           >
-            <Text style={styles.cardText}>{item.name}</Text>
-            <Text style={styles.discount}>20% OFF</Text>
+            <Image source={{ uri: item.image }} style={styles.image} />
+
+            <View style={styles.info}>
+              <Text style={styles.name}>{item.name}</Text>
+
+              <Text style={styles.description} numberOfLines={2}>
+                {item.description}
+              </Text>
+
+              <View style={styles.row}>
+                <View style={styles.row}>
+                  <Ionicons
+                    name="location-outline"
+                    size={14}
+                    color="#6B7280"
+                  />
+                  <Text style={styles.meta}>{item.distance}</Text>
+                </View>
+
+                <Text
+                  style={[
+                    styles.status,
+                    { color: item.isOpen ? "#16A34A" : "#DC2626" },
+                  ]}
+                >
+                  {item.isOpen ? "Aberto" : "Fechado"}
+                </Text>
+              </View>
+            </View>
           </TouchableOpacity>
         )}
       />
@@ -41,31 +102,62 @@ export default function EstablishmentsByCategoryScreen() {
   );
 }
 
+/* ---------------- STYLES ---------------- */
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: colors.background,
+    backgroundColor: "#F9FAFB",
+    padding: 16,
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
+  title: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#111827",
+  },
   card: {
-    height: 110,
-    borderRadius: 20,
-    backgroundColor: "#9BD3E3",
-    padding: 20,
-    justifyContent: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: "hidden",
+    elevation: 2,
   },
-  cardText: {
-    fontSize: 18,
-    fontWeight: "700",
+  image: {
+    width: "100%",
+    height: 140,
   },
-  discount: {
-    marginTop: 8,
-    color: colors.primary,
+  info: {
+    padding: 14,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 13,
+    color: "#6B7280",
+    marginBottom: 10,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  meta: {
+    fontSize: 12,
+    color: "#6B7280",
+    marginLeft: 4,
+  },
+  status: {
+    fontSize: 12,
     fontWeight: "600",
   },
 });

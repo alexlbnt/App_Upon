@@ -12,6 +12,7 @@ import EstablishmentScreen from "../screens/EstablishmentScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
 import CartScreen from "../screens/CartScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+
 import { colors } from "../theme/colors";
 
 /* ------------------ TABS ------------------ */
@@ -30,7 +31,7 @@ function CartButton({ children, onPress }: any) {
 }
 
 /* --------- BOTTOM TAB (HOME) -------------- */
-function Tabs() {
+function BottomTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -40,7 +41,7 @@ function Tabs() {
       }}
     >
       <Tab.Screen
-        name="Home"
+        name="HomeTab"
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -54,7 +55,7 @@ function Tabs() {
       />
 
       <Tab.Screen
-        name="Favorites"
+        name="FavoritesTab"
         component={FavoritesScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -68,7 +69,7 @@ function Tabs() {
       />
 
       <Tab.Screen
-        name="Cart"
+        name="CartTab"
         component={CartScreen}
         options={{
           tabBarButton: (props) => <CartButton {...props} />,
@@ -79,7 +80,7 @@ function Tabs() {
       />
 
       <Tab.Screen
-        name="Profile"
+        name="ProfileTab"
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -101,7 +102,7 @@ export default function BottomTabNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {/* Bottom Tabs */}
-        <Stack.Screen name="Tabs" component={Tabs} />
+        <Stack.Screen name="Tabs" component={BottomTabs} />
 
         {/* Categorias de Estabelecimentos */}
         <Stack.Screen
