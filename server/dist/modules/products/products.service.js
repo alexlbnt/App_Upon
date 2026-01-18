@@ -5,34 +5,44 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const product_entity_1 = require("./product.entity");
 let ProductsService = class ProductsService {
-    constructor(repository) {
-        this.repository = repository;
+    constructor() {
+        this.products = [
+            {
+                id: 1,
+                establishmentId: 1,
+                name: "Arroz 5kg",
+                description: "Arroz tipo 1",
+                price: 22.9,
+                image: "https://images.unsplash.com/photo-1604908554166-29e95dbb59fd",
+            },
+            {
+                id: 2,
+                establishmentId: 1,
+                name: "Feijão Carioca",
+                description: "Feijão selecionado",
+                price: 8.5,
+                image: "https://images.unsplash.com/photo-1615484477201-9f4953340fab",
+            },
+            {
+                id: 3,
+                establishmentId: 2,
+                name: "Pão Francês",
+                description: "Pão quentinho",
+                price: 0.6,
+                image: "https://images.unsplash.com/photo-1608198093002-ad4e005484ec",
+            },
+        ];
     }
     findByEstablishment(establishmentId) {
-        return this.repository.find({
-            where: {
-                establishment: { id: establishmentId },
-            },
-        });
+        return this.products.filter((p) => p.establishmentId === Number(establishmentId));
     }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(product_entity_1.Product)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    (0, common_1.Injectable)()
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

@@ -6,12 +6,12 @@ export class EstablishmentsController {
   constructor(private readonly service: EstablishmentsService) {}
 
   @Get("by-category/:categoryId")
-  findByCategory(@Param("categoryId") categoryId: string) {
+  findByCategory(@Param("categoryId") categoryId: number) {
     return this.service.findByCategory(categoryId);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
+  findOne(@Param("id") id: number) {
     return this.service.findOne(id);
   }
 }

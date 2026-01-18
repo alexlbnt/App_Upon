@@ -9,12 +9,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesService = void 0;
 const common_1 = require("@nestjs/common");
 let CategoriesService = class CategoriesService {
-    findAll() {
-        return [
-            { id: 1, name: "Mercado", icon: "cart" },
-            { id: 2, name: "Padaria", icon: "restaurant" },
-            { id: 3, name: "Farmácia", icon: "medkit" },
+    constructor() {
+        this.categories = [
+            {
+                id: 1,
+                name: "Mercado",
+                icon: "cart",
+            },
+            {
+                id: 2,
+                name: "Padaria",
+                icon: "pizza",
+            },
+            {
+                id: 3,
+                name: "Farmácia",
+                icon: "medkit",
+            },
+            {
+                id: 4,
+                name: "Restaurante",
+                icon: "restaurant",
+            },
         ];
+    }
+    findAll() {
+        return this.categories;
     }
 };
 exports.CategoriesService = CategoriesService;

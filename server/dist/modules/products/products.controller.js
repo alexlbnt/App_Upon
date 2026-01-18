@@ -28,7 +28,7 @@ __decorate([
     (0, common_1.Get)("by-establishment/:id"),
     __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "findByEstablishment", null);
 exports.ProductsController = ProductsController = __decorate([

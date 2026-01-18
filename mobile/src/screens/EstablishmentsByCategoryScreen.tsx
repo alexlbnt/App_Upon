@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,36 +25,54 @@ type Establishment = {
 export default function EstablishmentsByCategoryScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const { categoryId, title } = route.params;
+
+  const { categoryId, categoryName } = route.params;
 
   const [establishments, setEstablishments] = useState<Establishment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get(`/establishments/by-category/${categoryId}`)
-      .then((response) => {
-        setEstablishments(response.data);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    loadEstablishments();
+  }, [categoryId]);
+
+  async function loadEstablishments() {
+    try {
+      const response = await api.get(
+        `/establishments/by-category/${categoryId}`
+      );
+      setEstablishments(response.data);
+    } catch (error) {
+      console.log("Erro ao buscar estabelecimentos:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#111827" />
         </TouchableOpacity>
 
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{categoryName}</Text>
+
         <View style={{ width: 24 }} />
       </View>
 
-      {/* Lista */}
+      {/* LISTA */}
       <FlatList
         data={establishments}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => String(item.id)}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => (
@@ -62,7 +81,7 @@ export default function EstablishmentsByCategoryScreen() {
             activeOpacity={0.85}
             onPress={() =>
               navigation.navigate("Establishment", {
-                establishmentId: item.id,
+                id: item.id,
               })
             }
           >
@@ -76,7 +95,7 @@ export default function EstablishmentsByCategoryScreen() {
               </Text>
 
               <View style={styles.row}>
-                <View style={styles.row}>
+                <View style={styles.location}>
                   <Ionicons
                     name="location-outline"
                     size={14}
@@ -109,6 +128,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9FAFB",
     padding: 16,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
   },
   header: {
     flexDirection: "row",
@@ -150,6 +175,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  location: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   meta: {
     fontSize: 12,

@@ -8,31 +8,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoriesController = void 0;
 const common_1 = require("@nestjs/common");
-const establishments_service_1 = require("../establishments/establishments.service");
+const categories_service_1 = require("./categories.service");
 let CategoriesController = class CategoriesController {
-    constructor(establishmentsService) {
-        this.establishmentsService = establishmentsService;
+    constructor(service) {
+        this.service = service;
     }
-    findEstablishments(categoryId) {
-        return this.establishmentsService.findByCategory(categoryId);
+    findAll() {
+        return this.service.findAll();
     }
 };
 exports.CategoriesController = CategoriesController;
 __decorate([
-    (0, common_1.Get)(":categoryId/establishments"),
-    __param(0, (0, common_1.Param)("categoryId")),
+    (0, common_1.Get)(),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], CategoriesController.prototype, "findEstablishments", null);
+], CategoriesController.prototype, "findAll", null);
 exports.CategoriesController = CategoriesController = __decorate([
     (0, common_1.Controller)("categories"),
-    __metadata("design:paramtypes", [establishments_service_1.EstablishmentsService])
+    __metadata("design:paramtypes", [categories_service_1.CategoriesService])
 ], CategoriesController);
 //# sourceMappingURL=categories.controller.js.map

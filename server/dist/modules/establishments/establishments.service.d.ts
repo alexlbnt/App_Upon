@@ -1,8 +1,23 @@
-import { Repository } from "typeorm";
-import { Establishment } from "./establishment.entity";
 export declare class EstablishmentsService {
-    private readonly repository;
-    constructor(repository: Repository<Establishment>);
-    findByCategory(categoryId: string): Promise<Establishment[]>;
-    findOne(id: string): Promise<Establishment>;
+    private establishments;
+    findByCategory(categoryId: number): {
+        id: number;
+        categoryId: number;
+        name: string;
+        description: string;
+        image: string;
+        distance: string;
+        isOpen: boolean;
+        rating: number;
+    }[];
+    findOne(id: number): {
+        id: number;
+        categoryId: number;
+        name: string;
+        description: string;
+        image: string;
+        distance: string;
+        isOpen: boolean;
+        rating: number;
+    };
 }

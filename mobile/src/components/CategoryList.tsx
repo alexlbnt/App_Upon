@@ -30,7 +30,7 @@ export default function CategoryList({ data }: Props) {
         <Text style={styles.title}>Estabelecimentos</Text>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate("Categories")}
+          onPress={() => navigation.navigate("EstablishmentCategories")}
         >
           <Ionicons name="chevron-forward" size={22} color="#9CA3AF" />
         </TouchableOpacity>

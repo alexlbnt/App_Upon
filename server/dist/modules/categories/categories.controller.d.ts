@@ -1,6 +1,10 @@
-import { EstablishmentsService } from "../establishments/establishments.service";
+import { CategoriesService } from "./categories.service";
 export declare class CategoriesController {
-    private readonly establishmentsService;
-    constructor(establishmentsService: EstablishmentsService);
-    findEstablishments(categoryId: string): Promise<import("../establishments/establishment.entity").Establishment[]>;
+    private readonly service;
+    constructor(service: CategoriesService);
+    findAll(): {
+        id: number;
+        name: string;
+        icon: string;
+    }[];
 }
