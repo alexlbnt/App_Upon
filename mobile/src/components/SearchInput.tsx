@@ -1,23 +1,53 @@
 import { View, TextInput, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { colors } from "../theme/colors";
 
 export default function SearchInput() {
   return (
     <View style={styles.container}>
-      <TextInput placeholder="Busque" style={styles.input} />
+      <Ionicons
+        name="search-outline"
+        size={20}
+        color={colors.muted}
+        style={styles.icon}
+      />
+
+      <TextInput
+        placeholder="Busque por produtos ou estabelecimentos"
+        placeholderTextColor={colors.muted}
+        style={styles.input}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    marginTop: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 52,
+    marginBottom: 18,
+
+    // sombra iOS
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+
+    // sombra Android
+    elevation: 2,
   },
+
+  icon: {
+    marginRight: 10,
+  },
+
   input: {
-    backgroundColor: "#F3F4F6",
-    height: 50,
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    fontSize: 16,
+    flex: 1,
+    fontSize: 14,
+    color: colors.text,
   },
 });

@@ -1,19 +1,14 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { colors } from "../theme/colors";
 
 type Category = {
   id: number;
   name: string;
-  color: string;
   icon: string;
-  totalItems: number;
+  color: string;
+  totalItems?: number;
 };
 
 type Props = {
@@ -32,37 +27,35 @@ export default function CategoryList({ data }: Props) {
         <TouchableOpacity
           onPress={() => navigation.navigate("EstablishmentCategories")}
         >
-          <Ionicons name="chevron-forward" size={22} color="#9CA3AF" />
+          <Ionicons name="chevron-forward" size={20} color={colors.muted} />
         </TouchableOpacity>
       </View>
 
-      {/* Lista */}
+      {/* Lista horizontal */}
       <FlatList
         data={data}
         horizontal
+        keyExtractor={(item) => String(item.id)}
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ paddingRight: 16 }}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.card, { backgroundColor: item.color }]}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
             onPress={() =>
-              navigation.navigate("Establishments", {
+              navigation.navigate("EstablishmentsByCategory", {
                 categoryId: item.id,
-                title: item.name,
+                categoryName: item.name,
               })
             }
           >
-            <Ionicons
-              name={item.icon as any}
-              size={26}
-              color="#fff"
-              style={{ marginBottom: 6 }}
-            />
+            <Ionicons name={item.icon as any} size={26} color="#fff" />
 
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.items}>{item.totalItems} Itens</Text>
+            <Text style={styles.cardTitle}>{item.name}</Text>
+
+            <Text style={styles.cardSubtitle}>
+              {item.totalItems ?? 45} Itens
+            </Text>
           </TouchableOpacity>
         )}
       />
@@ -70,39 +63,45 @@ export default function CategoryList({ data }: Props) {
   );
 }
 
-/* ---------------- STYLES ---------------- */
+/* =======================
+   STYLES
+======================= */
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 24,
+    marginBottom: 24,
   },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 12,
   },
+
   title: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
+    fontWeight: "700",
+    color: colors.text,
   },
+
   card: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
+    width: 130,
+    height: 110,
+    borderRadius: 18,
     padding: 14,
-    justifyContent: "flex-end",
-    marginRight: 12,
+    marginRight: 14,
+    justifyContent: "space-between",
   },
-  name: {
+
+  cardTitle: {
     color: "#fff",
+    fontWeight: "700",
     fontSize: 14,
-    fontWeight: "600",
   },
-  items: {
+
+  cardSubtitle: {
     color: "#E5E7EB",
     fontSize: 12,
-    marginTop: 2,
   },
 });

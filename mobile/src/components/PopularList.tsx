@@ -1,174 +1,151 @@
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
   FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../theme/colors";
+import { useNavigation } from "@react-navigation/native";
 
-const DATA = [
-  {
-    id: "1",
-    name: "Peito de Frango",
-    discount: "5%",
-    added: false,
-  },
-  {
-    id: "2",
-    name: "Xuxu",
-    discount: "30%",
-    added: true,
-  },
-  {
-    id: "3",
-    name: "Detergente",
-    discount: "15%",
-    added: true,
-  },
-  {
-    id: "4",
-    name: "Resfenol",
-    discount: "5%",
-    added: false,
-  },
-];
+type PopularItem = {
+  id: number;
+  name: string;
+  image: string;
+  price: number;
+  discount?: number;
+  establishmentId: number;
+  establishmentName: string;
+};
 
-export default function PopularList() {
+type Props = {
+  data: PopularItem[];
+};
+
+export default function PopularList({ data }: Props) {
+  const navigation = useNavigation<any>();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Populares</Text>
+      <Text style={styles.title}>Populares perto de você</Text>
 
       <FlatList
-        data={DATA}
-        numColumns={2}
-        keyExtractor={(item) => item.id}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
+        data={data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => String(item.id)}
+        contentContainerStyle={{ paddingRight: 16 }}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            {/* FAVORITO */}
-            <TouchableOpacity style={styles.favorite}>
-              <Ionicons
-                name={item.added ? "heart" : "heart-outline"}
-                size={20}
-                color={item.added ? "#EF4444" : "#9CA3AF"}
-              />
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.card}
+            activeOpacity={0.85}
+            onPress={() =>
+              navigation.navigate("Establishment", {
+                establishmentId: item.establishmentId,
+              })
+            }
+          >
+            {/* Imagem */}
+            <Image source={{ uri: item.image }} style={styles.image} />
 
-            {/* DESCONTO */}
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{item.discount} OFF</Text>
-            </View>
+            {/* Info */}
+            <View style={styles.info}>
+              <Text style={styles.name} numberOfLines={2}>
+                {item.name}
+              </Text>
 
-            {/* IMAGEM (PLACEHOLDER) */}
-            <View style={styles.image} />
+              <Text style={styles.price}>
+                R$ {item.price.toFixed(2).replace(".", ",")}
+              </Text>
 
-            {/* INFO */}
-            <Text style={styles.name}>{item.name}</Text>
-
-            <View style={styles.discountRow}>
-              <Ionicons name="pricetag" size={14} color={colors.primary} />
-              <Text style={styles.discountText}>
-                Disc. {item.discount} Off
+              <Text style={styles.establishment}>
+                {item.establishmentName}
               </Text>
             </View>
 
-            <TouchableOpacity
-              style={[
-                styles.button,
-                item.added && styles.buttonDisabled,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.buttonText,
-                  item.added && styles.buttonTextDisabled,
-                ]}
-              >
-                {item.added ? "Adicionado à Lista" : "Adicionar à Lista"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+            {/* Badge desconto */}
+            {item.discount && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{item.discount}% OFF</Text>
+              </View>
+            )}
+          </TouchableOpacity>
         )}
       />
     </View>
   );
 }
 
+/* =======================
+   STYLES
+======================= */
+
 const styles = StyleSheet.create({
   container: {
-    marginTop: 24,
+    marginBottom: 28,
   },
+
   title: {
     fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 16,
-    color: "#111827",
+    fontWeight: "700",
+    color: colors.text,
+    marginBottom: 12,
   },
+
   card: {
-    width: "48%",
+    width: 160,
+    marginRight: 14,
     backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
-    elevation: 2,
+    borderRadius: 18,
+    overflow: "hidden",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
   },
+
   image: {
-    height: 90,
+    width: "100%",
+    height: 100,
     backgroundColor: "#E5E7EB",
-    borderRadius: 12,
-    marginBottom: 8,
   },
+
+  info: {
+    padding: 12,
+  },
+
   name: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.text,
+    marginBottom: 4,
+  },
+
+  price: {
     fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 6,
-  },
-  discountRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    marginBottom: 10,
-  },
-  discountText: {
-    fontSize: 12,
+    fontWeight: "700",
     color: colors.primary,
+    marginBottom: 2,
   },
-  button: {
-    backgroundColor: "#1F2937",
-    paddingVertical: 8,
-    borderRadius: 10,
-    alignItems: "center",
+
+  establishment: {
+    fontSize: 11,
+    color: colors.muted,
   },
-  buttonDisabled: {
-    backgroundColor: "#D1FAE5",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  buttonTextDisabled: {
-    color: "#065F46",
-  },
-  favorite: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    zIndex: 2,
-  },
+
   badge: {
     position: "absolute",
     top: 8,
-    right: 8,
-    backgroundColor: "#EF4444",
+    left: 8,
+    backgroundColor: colors.primary,
     paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-    zIndex: 2,
+    paddingVertical: 3,
+    borderRadius: 8,
   },
+
   badgeText: {
     color: "#fff",
     fontSize: 10,
