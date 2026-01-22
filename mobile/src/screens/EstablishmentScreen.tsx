@@ -6,14 +6,31 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+
 import { colors } from "../theme/colors";
+import { useCart } from "../contexts/CartContext";
+
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+};
 
 export default function EstablishmentScreen() {
+  const navigation = useNavigation<any>();
+  const { addItem } = useCart();
+
+  function handleAddToCart(product: Product) {
+    addItem(product);
+    Alert.alert("Adicionado 🛒", `${product.name} foi adicionado ao carrinho`);
+  }
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      
       {/* Banner */}
       <Image
         source={{
@@ -24,7 +41,10 @@ export default function EstablishmentScreen() {
 
       {/* Header flutuante */}
       <View style={styles.headerActions}>
-        <TouchableOpacity style={styles.iconButton}>
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
 
@@ -33,7 +53,7 @@ export default function EstablishmentScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Informações do estabelecimento */}
+      {/* Informações */}
       <View style={styles.info}>
         <Text style={styles.name}>Mercado do Zé</Text>
         <Text style={styles.description}>
@@ -60,21 +80,18 @@ export default function EstablishmentScreen() {
 
         <View style={styles.productsGrid}>
           <ProductCard
-            name="Peito de Frango"
-            price="R$ 12,90"
-            discount="5% OFF"
+            product={{ id: 1, name: "Peito de Frango", price: 12.9 }}
+            onAdd={handleAddToCart}
           />
 
           <ProductCard
-            name="Detergente"
-            price="R$ 2,99"
-            discount="15% OFF"
+            product={{ id: 2, name: "Detergente", price: 2.99 }}
+            onAdd={handleAddToCart}
           />
 
           <ProductCard
-            name="Refrigerante 2L"
-            price="R$ 7,49"
-            discount="10% OFF"
+            product={{ id: 3, name: "Refrigerante 2L", price: 7.49 }}
+            onAdd={handleAddToCart}
           />
         </View>
       </View>
@@ -82,9 +99,7 @@ export default function EstablishmentScreen() {
   );
 }
 
-/* =======================
-   COMPONENTES AUXILIARES
-======================= */
+/* ================= COMPONENTES ================= */
 
 function CategoryTag({ label }: { label: string }) {
   return (
@@ -95,13 +110,11 @@ function CategoryTag({ label }: { label: string }) {
 }
 
 function ProductCard({
-  name,
-  price,
-  discount,
+  product,
+  onAdd,
 }: {
-  name: string;
-  price: string;
-  discount: string;
+  product: Product;
+  onAdd: (product: Product) => void;
 }) {
   return (
     <View style={styles.productCard}>
@@ -109,20 +122,22 @@ function ProductCard({
         <Ionicons name="image-outline" size={28} color="#9CA3AF" />
       </View>
 
-      <Text style={styles.productName}>{name}</Text>
-      <Text style={styles.productPrice}>{price}</Text>
-      <Text style={styles.productDiscount}>{discount}</Text>
+      <Text style={styles.productName}>{product.name}</Text>
+      <Text style={styles.productPrice}>
+        R$ {product.price.toFixed(2)}
+      </Text>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => onAdd(product)}
+      >
         <Text style={styles.buttonText}>Adicionar à Lista</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-/* =======================
-   ESTILOS
-======================= */
+/* ================= STYLES ================= */
 
 const styles = StyleSheet.create({
   container: {
@@ -171,7 +186,6 @@ const styles = StyleSheet.create({
 
   categories: {
     paddingHorizontal: 20,
-    marginBottom: 10,
   },
 
   sectionTitle: {
@@ -233,20 +247,15 @@ const styles = StyleSheet.create({
 
   productPrice: {
     fontSize: 13,
-    marginTop: 2,
-  },
-
-  productDiscount: {
-    color: colors.primary,
-    fontSize: 12,
-    marginVertical: 4,
+    marginTop: 4,
+    color: "#374151",
   },
 
   button: {
     backgroundColor: colors.primary,
     paddingVertical: 8,
     borderRadius: 10,
-    marginTop: 6,
+    marginTop: 8,
   },
 
   buttonText: {

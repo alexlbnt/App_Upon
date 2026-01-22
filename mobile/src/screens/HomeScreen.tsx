@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 
-import Header from "../components/Header";
+import HomeHeader from "../components/HomeHeader";
 import SearchInput from "../components/SearchInput";
 import PromoCard from "../components/PromoCard";
 import CategoryList from "../components/CategoryList";
@@ -31,7 +31,7 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* HEADER */}
-      <Header />
+      <HomeHeader />
 
       {/* BUSCA */}
       <SearchInput />
