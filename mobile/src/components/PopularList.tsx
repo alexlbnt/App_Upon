@@ -1,81 +1,72 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-} from "react-native";
-import { colors } from "../theme/colors";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from "react-native";
+import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { getPopularProducts } from "../services/popular.service";
+import { colors } from "../theme/colors";
 
-type PopularItem = {
+type PopularProduct = {
   id: number;
   name: string;
-  image: string;
   price: number;
-  discount?: number;
+  image: string;
   establishmentId: number;
   establishmentName: string;
 };
 
-type Props = {
-  data: PopularItem[];
-};
-
-export default function PopularList({ data }: Props) {
+export default function PopularList() {
+  const [products, setProducts] = useState<PopularProduct[]>([]);
   const navigation = useNavigation<any>();
+
+  useEffect(() => {
+    loadPopular();
+  }, []);
+
+  async function loadPopular() {
+    const data = await getPopularProducts();
+    setProducts(data);
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Populares perto de você</Text>
+      <Text style={styles.title}>Populares</Text>
 
       <FlatList
-        data={data}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={{ paddingRight: 16 }}
+        data={products}
+        numColumns={2}
+        keyExtractor={(item) => item.id.toString()}
+        scrollEnabled={false}   // 🔥 MUITO IMPORTANTE
+        columnWrapperStyle={{ gap: 12 }}
+        contentContainerStyle={{ gap: 12 }}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.card}
-            activeOpacity={0.85}
-            onPress={() =>
-              navigation.navigate("Establishment", {
-                establishmentId: item.establishmentId,
-              })
-            }
-          >
-            {/* Imagem */}
-            <Image source={{ uri: item.image }} style={styles.image} />
+        <TouchableOpacity
+          style={styles.card}
+          activeOpacity={0.8}
+          onPress={() =>
+            navigation.navigate("Establishment", {
+            establishmentId: item.establishmentId,
+            })
+          }
+        >
+          <Image source={{ uri: item.image }} style={styles.image} />
+          <Text style={styles.name} numberOfLines={1}>
+            {item.name}
+          </Text>
 
-            {/* Info */}
-            <View style={styles.info}>
-              <Text style={styles.name} numberOfLines={2}>
-                {item.name}
-              </Text>
+          <Text style={styles.price}>
+            R$ {item.price.toFixed(2).replace(".", ",")}
+          </Text>
 
-              <Text style={styles.price}>
-                R$ {item.price.toFixed(2).replace(".", ",")}
-              </Text>
+          <Text style={styles.establishment}>
+            {item.establishmentName}
+          </Text>
+        </TouchableOpacity>
+      )}
+    />
 
-              <Text style={styles.establishment}>
-                {item.establishmentName}
-              </Text>
-            </View>
-
-            {/* Badge desconto */}
-            {item.discount && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{item.discount}% OFF</Text>
-              </View>
-            )}
-          </TouchableOpacity>
-        )}
-      />
     </View>
   );
 }
+
 
 /* =======================
    STYLES
@@ -83,72 +74,39 @@ export default function PopularList({ data }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 28,
+    marginTop: 24,
   },
-
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: colors.text,
     marginBottom: 12,
   },
-
   card: {
-    width: 160,
-    marginRight: 14,
+    flex: 1,
     backgroundColor: "#fff",
-    borderRadius: 18,
-    overflow: "hidden",
-
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
+    borderRadius: 16,
+    padding: 10,
   },
-
   image: {
     width: "100%",
-    height: 100,
+    height: 110,
+    borderRadius: 12,
     backgroundColor: "#E5E7EB",
+    marginBottom: 8,
   },
-
-  info: {
-    padding: 12,
-  },
-
   name: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 4,
-  },
-
-  price: {
     fontSize: 14,
+    fontWeight: "600",
+  },
+  price: {
+    fontSize: 13,
     fontWeight: "700",
     color: colors.primary,
-    marginBottom: 2,
+    marginTop: 2,
   },
-
   establishment: {
     fontSize: 11,
-    color: colors.muted,
-  },
-
-  badge: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    backgroundColor: colors.primary,
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 8,
-  },
-
-  badgeText: {
-    color: "#fff",
-    fontSize: 10,
-    fontWeight: "700",
+    color: "#6B7280",
+    marginTop: 2,
   },
 });

@@ -8,12 +8,15 @@ import CategoryList from "../components/CategoryList";
 import PopularList from "../components/PopularList";
 
 import { api } from "../services/api";
+import { getPopularProducts } from "../services/popular.service";
 
 export default function HomeScreen() {
   const [categories, setCategories] = useState([]);
+  const [popularProducts, setPopularProducts] = useState([]);
 
   useEffect(() => {
     loadCategories();
+    loadPopularProducts();
   }, []);
 
   async function loadCategories() {
@@ -22,6 +25,15 @@ export default function HomeScreen() {
       setCategories(response.data);
     } catch (error) {
       console.log("Erro ao buscar categorias:", error);
+    }
+  }
+
+  async function loadPopularProducts() {
+    try {
+      const data = await getPopularProducts();
+      setPopularProducts(data);
+    } catch (error) {
+      console.log("Erro ao buscar produtos populares:", error);
     }
   }
 
@@ -42,8 +54,8 @@ export default function HomeScreen() {
       {/* CATEGORIAS (HORIZONTAL) */}
       <CategoryList data={categories} />
 
-      {/* PRODUTOS POPULARES */}
-      <PopularList />
+      {/* PRODUTOS POPULARES (VITRINE) */}
+      <PopularList data={popularProducts} />
     </ScrollView>
   );
 }
