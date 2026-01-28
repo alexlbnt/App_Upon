@@ -1,79 +1,136 @@
-import { View, Text, StyleSheet } from "react-native";
-import { colors } from "../theme/colors";
+import { View, Text, StyleSheet, FlatList, Dimensions } from "react-native";
+import { useEffect, useRef, useState } from "react";
+
+const { width } = Dimensions.get("window");
+
+type PromoItem = {
+  id: number;
+  title: string;
+  subtitle?: string;
+  description: string;
+  backgroundColor: string;
+};
+
+const PROMOS: PromoItem[] = [
+  {
+    id: 1,
+    title: "Semana Feliz",
+    subtitle: "20% OFF",
+    description: "Em produtos alimentícios",
+    backgroundColor: "#9BD3E0",
+  },
+  {
+    id: 2,
+    title: "Atenção Empresário",
+    subtitle: "Cadastre seu negócio",
+    description:
+      "Possui um estabelecimento e deseja cadastrar no Upon?\nEntre em contato conosco:     (62) 99610-6767",
+    backgroundColor: "#fda2a2",
+  },
+  {
+    id: 3,
+    title: "Volta às Aulas",
+    subtitle: "10% OFF",
+    description: "Em materiais escolares",
+    backgroundColor: "#cbfcb5",
+  },
+];
 
 export default function PromoCard() {
+  const flatListRef = useRef<FlatList>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const next =
+        currentIndex === PROMOS.length - 1 ? 0 : currentIndex + 1;
+
+      flatListRef.current?.scrollToIndex({
+        index: next,
+        animated: true,
+      });
+
+      setCurrentIndex(next);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex]);
+
   return (
     <View style={styles.container}>
-      {/* Formas decorativas */}
-      <View style={styles.circleSmall} />
-      <View style={styles.circleLarge} />
+      <FlatList
+        ref={flatListRef}
+        data={PROMOS}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        pagingEnabled
+        scrollEnabled={false}
+        showsHorizontalScrollIndicator={false}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        renderItem={({ item }) => (
+          <View style={styles.page}>
+            <View
+              style={[
+                styles.card,
+                { backgroundColor: item.backgroundColor },
+              ]}
+            >
+              <Text style={styles.title}>{item.title}</Text>
 
-      <Text style={styles.subtitle}>Semana Feliz</Text>
-      <Text style={styles.title}>20% OFF</Text>
-      <Text style={styles.description}>
-        Em produtos alimentícios
-      </Text>
+              {item.subtitle && (
+                <Text style={styles.subtitle}>{item.subtitle}</Text>
+              )}
+
+              <Text style={styles.description}>{item.description}</Text>
+            </View>
+          </View>
+        )}
+      />
     </View>
   );
 }
 
+/* ================= STYLES ================= */
+
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#8ECAD8",
-    borderRadius: 20,
-    padding: 20,
-    height: 150,
-    marginBottom: 24,
-    justifyContent: "center",
-    overflow: "hidden",
-
-    // sombra iOS
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 6 },
-
-    // sombra Android
-    elevation: 4,
+    marginTop: 16,
   },
 
-  subtitle: {
-    fontSize: 13,
-    color: "#1F2937",
-    marginBottom: 4,
+  page: {
+    width,
+    paddingHorizontal: 26,
+  },
+
+  card: {
+    height: 125, // 🔥 altura fixa para todos
+    right: 15,
+    borderRadius: 20,
+    padding: 18,
+    justifyContent: "center",
   },
 
   title: {
-    fontSize: 32,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#065F73",
+  },
+
+  subtitle: {
+    fontSize: 20,
     fontWeight: "800",
-    color: "#111827",
-    marginBottom: 6,
+    marginTop: 2,
+    color: "#0F172A",
   },
 
   description: {
     fontSize: 13,
-    color: "#374151",
-  },
-
-  /* -------- FORMAS -------- */
-
-  circleSmall: {
-    position: "absolute",
-    top: -20,
-    right: -20,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.25)",
-  },
-
-  circleLarge: {
-    position: "absolute",
-    bottom: -50,
-    right: -30,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: "rgba(255,255,255,0.15)",
+    marginTop: 8,
+    color: "#0F172A",
+    lineHeight: 18,
   },
 });

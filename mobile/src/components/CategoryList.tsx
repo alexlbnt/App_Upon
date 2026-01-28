@@ -70,6 +70,7 @@ export default function CategoryList({ data }: Props) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 24,
+    marginTop: 16,
   },
 
   header: {
