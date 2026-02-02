@@ -24,7 +24,7 @@ const PROMOS: PromoItem[] = [
     title: "Atenção Empresário",
     subtitle: "Cadastre seu negócio",
     description:
-      "Possui um estabelecimento e deseja cadastrar no Upon?\nEntre em contato conosco:     (62) 99610-6767",
+      "Possui um estabelecimento e deseja cadastrar no Upon?\nEntre em contato conosco:\n(62) 99610-6767",
     backgroundColor: "#fda2a2",
   },
   {
@@ -58,6 +58,7 @@ export default function PromoCard() {
 
   return (
     <View style={styles.container}>
+      {/* CARROSSEL */}
       <FlatList
         ref={flatListRef}
         data={PROMOS}
@@ -90,6 +91,19 @@ export default function PromoCard() {
           </View>
         )}
       />
+
+      {/* INDICADOR DE PÁGINAS */}
+      <View style={styles.dotsContainer}>
+        {PROMOS.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.dot,
+              index === currentIndex && styles.activeDot,
+            ]}
+          />
+        ))}
+      </View>
     </View>
   );
 }
@@ -107,7 +121,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 125, // 🔥 altura fixa para todos
+    height: 125, // 🔥 mantido
     right: 15,
     borderRadius: 20,
     padding: 18,
@@ -132,5 +146,27 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: "#0F172A",
     lineHeight: 18,
+  },
+
+  /* ===== INDICADOR ===== */
+
+  dotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#CBD5E1",
+    marginHorizontal: 4,
+  },
+
+  activeDot: {
+    backgroundColor: "#0F172A",
+    width: 10,
+    height: 10,
   },
 });

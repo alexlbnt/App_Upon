@@ -1,4 +1,10 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -17,7 +23,7 @@ export default function CartScreen() {
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Meu Carrinho</Text>
+        <Text style={styles.title}>Meus Cupons</Text>
 
         <View style={{ width: 24 }} />
       </View>
@@ -25,8 +31,11 @@ export default function CartScreen() {
       {/* LISTA */}
       {items.length === 0 ? (
         <View style={styles.empty}>
-          <Ionicons name="cart-outline" size={48} color="#9CA3AF" />
-          <Text style={styles.emptyText}>Seu carrinho está vazio</Text>
+          <Ionicons name="ticket-outline" size={48} color="#9CA3AF" />
+          <Text style={styles.emptyTitle}>Nenhum cupom salvo</Text>
+          <Text style={styles.emptyText}>
+            Adicione cupons para usar no estabelecimento
+          </Text>
         </View>
       ) : (
         <>
@@ -34,13 +43,18 @@ export default function CartScreen() {
             data={items}
             keyExtractor={(item) => item.id.toString()}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 16 }}
+            contentContainerStyle={{
+              paddingBottom: 220, // espaço real pro footer fixo
+            }}
             renderItem={({ item }) => (
               <View style={styles.item}>
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text style={styles.itemName}>{item.name}</Text>
                   <Text style={styles.itemPrice}>
-                    R$ {item.price.toFixed(2)}
+                    R$ {item.price.toFixed(2).replace(".", ",")}
+                  </Text>
+                  <Text style={styles.itemHint}>
+                    Cupom válido no estabelecimento
                   </Text>
                 </View>
 
@@ -55,24 +69,34 @@ export default function CartScreen() {
             )}
           />
 
-          {/* FOOTER */}
+          {/* FOOTER FIXO */}
           <View style={styles.footer}>
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Total</Text>
+              <Text style={styles.totalLabel}>Total em descontos</Text>
               <Text style={styles.totalValue}>
-                R$ {total.toFixed(2)}
+                R$ {total.toFixed(2).replace(".", ",")}
               </Text>
             </View>
 
-            <TouchableOpacity style={styles.checkoutButton}>
-              <Text style={styles.checkoutText}>Finalizar Compra</Text>
+            <TouchableOpacity
+              style={styles.checkoutButton}
+              onPress={() => navigation.navigate("UseCoupons")}
+              activeOpacity={0.9}
+            >
+              <Text style={styles.checkoutText}>
+                Usar cupons no estabelecimento
+              </Text>
             </TouchableOpacity>
+
+            <Text style={styles.footerHint}>
+              Apresente seus cupons no local para garantir o desconto
+            </Text>
 
             <TouchableOpacity
               style={styles.clearButton}
               onPress={clearCart}
             >
-              <Text style={styles.clearText}>Limpar Carrinho</Text>
+              <Text style={styles.clearText}>Remover todos os cupons</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -87,14 +111,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: 16,
   },
 
   header: {
+    padding: 16,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20,
   },
 
   title: {
@@ -107,18 +130,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingHorizontal: 40,
+  },
+
+  emptyTitle: {
+    marginTop: 12,
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text,
   },
 
   emptyText: {
-    marginTop: 12,
-    fontSize: 14,
+    marginTop: 6,
+    fontSize: 13,
     color: "#6B7280",
+    textAlign: "center",
   },
 
   item: {
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 14,
+    marginHorizontal: 16,
     marginBottom: 12,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -133,12 +166,27 @@ const styles = StyleSheet.create({
 
   itemPrice: {
     fontSize: 13,
-    color: "#6B7280",
+    color: colors.primary,
     marginTop: 4,
+    fontWeight: "700",
   },
 
+  itemHint: {
+    fontSize: 11,
+    color: "#6B7280",
+    marginTop: 2,
+  },
+
+  /* FOOTER FIXO */
   footer: {
-    marginTop: 10,
+    position: "absolute",
+    bottom: 90, // respeita BottomTab
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    padding: 16,
+    borderTopWidth: 1,
+    borderColor: "#E5E7EB",
   },
 
   totalRow: {
@@ -148,7 +196,7 @@ const styles = StyleSheet.create({
   },
 
   totalLabel: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "600",
   },
 
@@ -169,6 +217,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
     fontSize: 14,
+  },
+
+  footerHint: {
+    marginTop: 8,
+    fontSize: 11,
+    color: "#6B7280",
+    textAlign: "center",
   },
 
   clearButton: {
