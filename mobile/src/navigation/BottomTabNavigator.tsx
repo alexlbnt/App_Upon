@@ -1,7 +1,6 @@
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -30,7 +29,7 @@ function CartButton({ children, onPress }: any) {
   );
 }
 
-/* --------- BOTTOM TAB (HOME) -------------- */
+/* --------- BOTTOM TAB --------------------- */
 function BottomTabs() {
   return (
     <Tab.Navigator
@@ -96,33 +95,29 @@ function BottomTabs() {
   );
 }
 
-/* -------- NAVIGATOR PRINCIPAL ------------- */
+/* -------- STACK PRINCIPAL DO APP ---------- */
 export default function BottomTabNavigator() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* Bottom Tabs */}
-        <Stack.Screen name="Tabs" component={BottomTabs} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* Tabs */}
+      <Stack.Screen name="Tabs" component={BottomTabs} />
 
-        {/* Categorias de Estabelecimentos */}
-        <Stack.Screen
-          name="EstablishmentCategories"
-          component={EstablishmentCategoriesScreen}
-        />
+      {/* Fluxo interno */}
+      <Stack.Screen
+        name="EstablishmentCategories"
+        component={EstablishmentCategoriesScreen}
+      />
 
-        {/* Estabelecimentos por Categoria */}
-        <Stack.Screen
-          name="EstablishmentsByCategory"
-          component={EstablishmentsByCategoryScreen}
-        />
+      <Stack.Screen
+        name="EstablishmentsByCategory"
+        component={EstablishmentsByCategoryScreen}
+      />
 
-        {/* Detalhe do Estabelecimento */}
-        <Stack.Screen
-          name="Establishment"
-          component={EstablishmentScreen}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <Stack.Screen
+        name="Establishment"
+        component={EstablishmentScreen}
+      />
+    </Stack.Navigator>
   );
 }
 
@@ -137,6 +132,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     elevation: 10,
   },
+
   cartButton: {
     width: 64,
     height: 64,

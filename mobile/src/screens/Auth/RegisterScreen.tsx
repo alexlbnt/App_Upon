@@ -4,47 +4,41 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 import { colors } from "../../theme/colors";
-import { useAuth } from "../../contexts/AuthContext";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const navigation = useNavigation<any>();
-  const { login } = useAuth();
-
-  function handleLogin() {
-    // 🔥 no futuro aqui entra API
-    login();
-  }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.title}>Bem-vindo ao Upon 👋</Text>
+        <Text style={styles.title}>Criar conta</Text>
         <Text style={styles.subtitle}>
-          Entre para acessar seus cupons de desconto
+          Cadastre-se para salvar e usar cupons
         </Text>
       </View>
 
       {/* FORM */}
       <View style={styles.form}>
         <View style={styles.inputContainer}>
+          <Ionicons name="person-outline" size={18} color="#6B7280" />
+          <TextInput
+            placeholder="Nome"
+            placeholderTextColor="#9CA3AF"
+            style={styles.input}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
           <Ionicons name="mail-outline" size={18} color="#6B7280" />
           <TextInput
             placeholder="E-mail"
             placeholderTextColor="#9CA3AF"
             style={styles.input}
-            keyboardType="email-address"
-            autoCapitalize="none"
           />
         </View>
 
@@ -62,25 +56,20 @@ export default function LoginScreen() {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.loginButton}
-          activeOpacity={0.85}
-          onPress={handleLogin}
-        >
-          <Text style={styles.loginText}>Entrar</Text>
+        <TouchableOpacity style={styles.registerButton}>
+          <Text style={styles.registerText}>Criar conta</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.registerLink}
-          onPress={() => navigation.navigate("Register")}
+          style={styles.loginLink}
+          onPress={() => navigation.goBack()}
         >
-          <Text style={styles.registerText}>
-            Ainda não tem conta?{" "}
-            <Text style={styles.link}>Criar agora</Text>
+          <Text style={styles.loginText}>
+            Já tem conta? <Text style={styles.link}>Entrar</Text>
           </Text>
         </TouchableOpacity>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -134,7 +123,7 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
 
-  loginButton: {
+  registerButton: {
     backgroundColor: colors.primary,
     paddingVertical: 14,
     borderRadius: 14,
@@ -142,18 +131,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  loginText: {
+  registerText: {
     color: "#fff",
     fontWeight: "700",
     fontSize: 15,
   },
 
-  registerLink: {
+  loginLink: {
     marginTop: 18,
     alignItems: "center",
   },
 
-  registerText: {
+  loginText: {
     fontSize: 13,
     color: "#6B7280",
   },
