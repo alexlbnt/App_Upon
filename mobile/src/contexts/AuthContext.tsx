@@ -1,9 +1,11 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type AuthContextData = {
   isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
+  isLoading: boolean;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextData>(
@@ -16,18 +18,54 @@ export function AuthProvider({
   children: React.ReactNode;
 }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  function login() {
+  /* 🔄 Carrega login salvo ao abrir o app */
+  useEffect(() => {
+    async function loadStoredUser() {
+      try {
+        const storedUser = await AsyncStorage.getItem(
+          "@upon:user"
+        );
+
+        if (storedUser) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.log("Erro ao carregar usuário:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadStoredUser();
+  }, []);
+
+  /* 🔐 Login */
+  async function login() {
     setIsAuthenticated(true);
+
+    await AsyncStorage.setItem(
+      "@upon:user",
+      JSON.stringify({ logged: true })
+    );
   }
 
-  function logout() {
+  /* 🚪 Logout */
+  async function logout() {
     setIsAuthenticated(false);
+
+    await AsyncStorage.removeItem("@upon:user");
   }
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout }}
+      value={{
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
