@@ -8,16 +8,27 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 import { colors } from "../theme/colors";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function ProfileScreen() {
+  const { logout } = useAuth();
+
   function handleLogout() {
     Alert.alert(
-      "Sair",
+      "Sair da conta",
       "Deseja realmente sair da sua conta?",
       [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Sair", style: "destructive", onPress: () => {} },
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Sair",
+          style: "destructive",
+          onPress: logout, // 🔥 LOGOUT REAL
+        },
       ]
     );
   }
@@ -41,7 +52,9 @@ export default function ProfileScreen() {
           <Text style={styles.email}>joao@email.com</Text>
 
           <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>Editar perfil</Text>
+            <Text style={styles.editButtonText}>
+              Editar perfil
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -49,22 +62,10 @@ export default function ProfileScreen() {
       {/* SEÇÃO CONTA */}
       <Text style={styles.sectionTitle}>Conta</Text>
 
-      <ProfileItem
-        icon="person-outline"
-        label="Meus dados"
-      />
-      <ProfileItem
-        icon="location-outline"
-        label="Endereços"
-      />
-      <ProfileItem
-        icon="heart-outline"
-        label="Favoritos"
-      />
-      <ProfileItem
-        icon="time-outline"
-        label="Histórico"
-      />
+      <ProfileItem icon="person-outline" label="Meus dados" />
+      <ProfileItem icon="location-outline" label="Endereços" />
+      <ProfileItem icon="heart-outline" label="Favoritos" />
+      <ProfileItem icon="time-outline" label="Histórico" />
 
       {/* SEÇÃO CONFIGURAÇÕES */}
       <Text style={styles.sectionTitle}>Configurações</Text>
@@ -72,10 +73,6 @@ export default function ProfileScreen() {
       <ProfileItem
         icon="notifications-outline"
         label="Notificações"
-      />
-      <ProfileItem
-        icon="card-outline"
-        label="Formas de pagamento"
       />
       <ProfileItem
         icon="help-circle-outline"
@@ -91,7 +88,11 @@ export default function ProfileScreen() {
         style={styles.logoutButton}
         onPress={handleLogout}
       >
-        <Ionicons name="log-out-outline" size={18} color="#DC2626" />
+        <Ionicons
+          name="log-out-outline"
+          size={18}
+          color="#DC2626"
+        />
         <Text style={styles.logoutText}>Sair da conta</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -110,7 +111,11 @@ function ProfileItem({
   return (
     <TouchableOpacity style={styles.item}>
       <View style={styles.itemLeft}>
-        <Ionicons name={icon} size={20} color={colors.primary} />
+        <Ionicons
+          name={icon}
+          size={20}
+          color={colors.primary}
+        />
         <Text style={styles.itemText}>{label}</Text>
       </View>
 

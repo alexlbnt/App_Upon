@@ -29,8 +29,8 @@ function CartButton({ children, onPress }: any) {
   );
 }
 
-/* --------- BOTTOM TAB --------------------- */
-function BottomTabs() {
+/* --------- BOTTOM TABS -------------------- */
+function Tabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -40,7 +40,7 @@ function BottomTabs() {
       }}
     >
       <Tab.Screen
-        name="HomeTab"
+        name="Home"
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -54,7 +54,7 @@ function BottomTabs() {
       />
 
       <Tab.Screen
-        name="FavoritesTab"
+        name="Favorites"
         component={FavoritesScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -68,7 +68,7 @@ function BottomTabs() {
       />
 
       <Tab.Screen
-        name="CartTab"
+        name="Cart"
         component={CartScreen}
         options={{
           tabBarButton: (props) => <CartButton {...props} />,
@@ -79,7 +79,7 @@ function BottomTabs() {
       />
 
       <Tab.Screen
-        name="ProfileTab"
+        name="Profile"
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -100,9 +100,9 @@ export default function BottomTabNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* Tabs */}
-      <Stack.Screen name="Tabs" component={BottomTabs} />
+      <Stack.Screen name="Tabs" component={Tabs} />
 
-      {/* Fluxo interno */}
+      {/* Fluxos internos */}
       <Stack.Screen
         name="EstablishmentCategories"
         component={EstablishmentCategoriesScreen}
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     height: 70,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    position: "absolute",
     backgroundColor: "#fff",
     borderTopWidth: 0,
     elevation: 10,

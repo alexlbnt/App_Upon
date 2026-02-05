@@ -111,7 +111,7 @@ export default function LoginScreen() {
         <TouchableOpacity
           style={styles.loginButton}
           activeOpacity={0.85}
-          onPress={handleLogin}
+          onPress={login}
         >
           <Text style={styles.loginText}>ENTRAR</Text>
         </TouchableOpacity>
