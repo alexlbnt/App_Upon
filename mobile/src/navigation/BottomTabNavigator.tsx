@@ -11,6 +11,7 @@ import EstablishmentScreen from "../screens/EstablishmentScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
 import CartScreen from "../screens/CartScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import CouponDetailsScreen from "../screens/CouponDetailsScreen";
 
 import { colors } from "../theme/colors";
 
@@ -117,6 +118,12 @@ export default function BottomTabNavigator() {
         name="Establishment"
         component={EstablishmentScreen}
       />
+
+      <Stack.Screen
+        name="CouponDetails"
+        component={CouponDetailsScreen}
+      />
+      
     </Stack.Navigator>
   );
 }
