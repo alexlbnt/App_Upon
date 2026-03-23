@@ -7,13 +7,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Alert } from "react-native";
 
 import { colors } from "../theme/colors";
+import { useWallet } from "../contexts/WalletContext";
 
 export default function CouponDetailsScreen() {
   const route = useRoute<any>();
+  const navigation = useNavigation<any>();
   const { coupon } = route.params;
+  const { addCoupon } = useWallet();
 
   const discountLabel =
     coupon.discountType === "percentage"
@@ -21,7 +25,18 @@ export default function CouponDetailsScreen() {
       : `R$ ${coupon.discountValue} OFF`;
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* HEADER FLOATING */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#111827" />
+        </TouchableOpacity>
+      </View>
+
       {/* IMAGEM */}
       <Image
         source={{
@@ -82,14 +97,31 @@ export default function CouponDetailsScreen() {
           </View>
         )}
 
-        {/* BOTÃO USAR */}
-        <TouchableOpacity style={styles.useButton}>
+        {/* BOTÃO SALVAR */}
+        <TouchableOpacity
+          style={styles.useButton}
+          onPress={() => {
+            addCoupon({
+              id: coupon.id || new Date().getTime(),
+              name: coupon.title,
+              discountValue: coupon.discountType === "percentage" ? null : coupon.discountValue,
+              price: coupon.price || null,
+              image: coupon.image || "https://images.unsplash.com/photo-1600891964599-f61ba0e24092",
+              storeName: coupon.storeName || "Estabelecimento Parceiro",
+            });
+            Alert.alert("Sucesso", "Cupom salvo na sua Carteira!", [
+              { text: "Ver Carteira", onPress: () => navigation.navigate("Wallet") },
+              { text: "Continuar" }
+            ]);
+          }}
+        >
           <Text style={styles.useButtonText}>
-            USAR CUPOM
+            SALVAR CUPOM NA CARTEIRA
           </Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -97,6 +129,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+
+  header: {
+    position: "absolute",
+    top: 50, // respect status bar approximately
+    left: 20,
+    zIndex: 10,
+  },
+
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   image: {

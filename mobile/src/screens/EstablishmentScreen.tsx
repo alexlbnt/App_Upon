@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -38,6 +38,7 @@ const COUPONS: Coupon[] = [
     establishmentId: 1,
     establishmentName: "Mercado do Zé",
     expiresAt: "30/03/2026",
+    category: "Frutas"
   },
   {
     id: 2,
@@ -49,6 +50,7 @@ const COUPONS: Coupon[] = [
     establishmentId: 1,
     establishmentName: "Mercado do Zé",
     expiresAt: "28/03/2026",
+    category: "Carnes"
   },
   {
     id: 3,
@@ -60,6 +62,7 @@ const COUPONS: Coupon[] = [
     establishmentId: 1,
     establishmentName: "Mercado do Zé",
     expiresAt: "25/03/2026",
+    category: "Bebidas"
   },
 ];
 
@@ -68,6 +71,13 @@ const COUPONS: Coupon[] = [
 export default function EstablishmentScreen() {
   const navigation = useNavigation<any>();
   const { toggleFavorite, isFavorite } = useFavorites();
+  const [activeCategory, setActiveCategory] = useState<string>("Todos");
+
+  const availableCategories = ["Todos", "Frutas", "Carnes", "Limpeza", "Bebidas"];
+
+  const filteredCoupons = activeCategory === "Todos" 
+    ? COUPONS 
+    : COUPONS.filter(c => c.category === activeCategory);
 
   return (
     <ScrollView
@@ -135,12 +145,16 @@ export default function EstablishmentScreen() {
       {/* CATEGORIES */}
       <View style={styles.categories}>
         <Text style={styles.sectionTitle}>Categorias</Text>
-        <View style={styles.tags}>
-          <CategoryTag label="Frutas" />
-          <CategoryTag label="Carnes" />
-          <CategoryTag label="Limpeza" />
-          <CategoryTag label="Bebidas" />
-        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tags}>
+          {availableCategories.map((cat) => (
+             <CategoryTag 
+                key={cat} 
+                label={cat} 
+                isActive={activeCategory === cat} 
+                onPress={() => setActiveCategory(cat)} 
+             />
+          ))}
+        </ScrollView>
       </View>
 
       {/* CUPONS */}
@@ -149,7 +163,13 @@ export default function EstablishmentScreen() {
           Cupons Disponíveis
         </Text>
 
-        <CouponGrid coupons={COUPONS} />
+        {filteredCoupons.length > 0 ? (
+          <CouponGrid coupons={filteredCoupons} />
+        ) : (
+          <Text style={{textAlign: "center", color: colors.muted, marginTop: 20}}>
+            Nenhum cupom disponível nesta categoria.
+          </Text>
+        )}
       </View>
     </ScrollView>
   );
@@ -157,11 +177,13 @@ export default function EstablishmentScreen() {
 
 /* ================= COMPONENTS ================= */
 
-function CategoryTag({ label }: { label: string }) {
+function CategoryTag({ label, isActive, onPress }: { label: string; isActive?: boolean; onPress?: () => void }) {
   return (
-    <View style={styles.tag}>
-      <Text style={styles.tagText}>{label}</Text>
-    </View>
+    <TouchableOpacity onPress={onPress}>
+      <View style={[styles.tag, isActive && { backgroundColor: colors.primary }]}>
+        <Text style={[styles.tagText, isActive && { color: "#fff" }]}>{label}</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
 

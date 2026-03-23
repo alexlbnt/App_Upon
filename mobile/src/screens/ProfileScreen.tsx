@@ -11,9 +11,13 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { colors } from "../theme/colors";
 import { useAuth } from "../contexts/AuthContext";
+import { useWallet } from "../contexts/WalletContext";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProfileScreen() {
   const { logout } = useAuth();
+  const { usedItems } = useWallet();
+  const navigation = useNavigation<any>();
 
   function handleLogout() {
     Alert.alert(
@@ -62,10 +66,11 @@ export default function ProfileScreen() {
       {/* SEÇÃO CONTA */}
       <Text style={styles.sectionTitle}>Conta</Text>
 
+      <ProfileItem icon="business-outline" label="Área do Lojista" onPress={() => navigation.navigate("AdminHome")} highlight={true} />
       <ProfileItem icon="person-outline" label="Meus dados" />
       <ProfileItem icon="location-outline" label="Endereços" />
       <ProfileItem icon="heart-outline" label="Favoritos" />
-      <ProfileItem icon="time-outline" label="Histórico" />
+      <ProfileItem icon="time-outline" label={`Histórico (${usedItems.length} cupons usados)`} />
 
       {/* SEÇÃO CONFIGURAÇÕES */}
       <Text style={styles.sectionTitle}>Configurações</Text>
@@ -104,19 +109,23 @@ export default function ProfileScreen() {
 function ProfileItem({
   icon,
   label,
+  onPress,
+  highlight,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
+  onPress?: () => void;
+  highlight?: boolean;
 }) {
   return (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity style={[styles.item, highlight && { borderLeftWidth: 4, borderLeftColor: colors.primary, backgroundColor: colors.primary + "10" }]} onPress={onPress}>
       <View style={styles.itemLeft}>
         <Ionicons
           name={icon}
           size={20}
           color={colors.primary}
         />
-        <Text style={styles.itemText}>{label}</Text>
+        <Text style={[styles.itemText, highlight && { fontWeight: "bold" }]}>{label}</Text>
       </View>
 
       <Ionicons

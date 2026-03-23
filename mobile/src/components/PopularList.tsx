@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import CouponGrid from "../components/CouponGrid";
 import { Coupon } from "../types/Coupon";
 
-export default function PopularList() {
+interface PopularListProps {
+  searchQuery?: string;
+}
+
+export default function PopularList({ searchQuery = "" }: PopularListProps) {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
 
   useEffect(() => {
@@ -38,10 +42,24 @@ export default function PopularList() {
     setCoupons(mock);
   }
 
+  const filteredCoupons = coupons.filter((coupon) => {
+    const term = searchQuery.toLowerCase();
+    return (
+      coupon.title.toLowerCase().includes(term) ||
+      coupon.establishmentName.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Populares</Text>
-      <CouponGrid coupons={coupons} />
+      {searchQuery === "" && <Text style={styles.title}>Populares</Text>}
+      {filteredCoupons.length > 0 ? (
+        <CouponGrid coupons={filteredCoupons} />
+      ) : (
+        <Text style={{ marginTop: 20, textAlign: "center", color: "#6B7280" }}>
+          Nenhum resultado encontrado.
+        </Text>
+      )}
     </View>
   );
 }

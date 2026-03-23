@@ -1,31 +1,20 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Category } from './category.entity';
 
 @Injectable()
 export class CategoriesService {
-  private categories = [
-    {
-      id: 1,
-      name: "Mercado",
-      icon: "cart",
-    },
-    {
-      id: 2,
-      name: "Padaria",
-      icon: "pizza",
-    },
-    {
-      id: 3,
-      name: "Farmácia",
-      icon: "medkit",
-    },
-    {
-      id: 4,
-      name: "Restaurante",
-      icon: "restaurant",
-    },
-  ];
+  constructor(
+    @InjectRepository(Category)
+    private readonly repo: Repository<Category>,
+  ) {}
 
   findAll() {
-    return this.categories;
+    return this.repo.find();
+  }
+
+  findOne(id: string) {
+    return this.repo.findOne({ where: { id } });
   }
 }

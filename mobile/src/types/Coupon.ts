@@ -7,4 +7,5 @@ export type Coupon = {
   establishmentId: number;
   establishmentName: string;
   expiresAt: string;
+  category?: string;
 };

@@ -19,6 +19,9 @@ let EstablishmentsController = class EstablishmentsController {
     constructor(service) {
         this.service = service;
     }
+    findAll() {
+        return this.service.findAll();
+    }
     findByCategory(categoryId) {
         return this.service.findByCategory(categoryId);
     }
@@ -28,17 +31,23 @@ let EstablishmentsController = class EstablishmentsController {
 };
 exports.EstablishmentsController = EstablishmentsController;
 __decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EstablishmentsController.prototype, "findAll", null);
+__decorate([
     (0, common_1.Get)("by-category/:categoryId"),
     __param(0, (0, common_1.Param)("categoryId")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], EstablishmentsController.prototype, "findByCategory", null);
 __decorate([
     (0, common_1.Get)(":id"),
     __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], EstablishmentsController.prototype, "findOne", null);
 exports.EstablishmentsController = EstablishmentsController = __decorate([

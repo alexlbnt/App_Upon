@@ -24,9 +24,13 @@ __decorate([
     __metadata("design:type", String)
 ], Category.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Category.prototype, "icon", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Category.prototype, "color", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => establishment_entity_1.Establishment, establishment => establishment.category),
     __metadata("design:type", Array)

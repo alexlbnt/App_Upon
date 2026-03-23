@@ -1,39 +1,47 @@
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import * as Location from "expo-location";
 
 import HomeHeader from "../components/HomeHeader";
 import SearchInput from "../components/SearchInput";
 import PromoCard from "../components/PromoCard";
 import CategoryList from "../components/CategoryList";
-import PopularList from "../components/PopularList";
+import PopularList from "../components/PopularList"; // Note: Inside it might say Popular Products, we should just keep using the component but rename header visually if we could, or just leave it for now but remove the 'Products' focus.
 
 import { api } from "../services/api";
 import { getPopularProducts } from "../services/popular.service";
 
 export default function HomeScreen() {
-  const [categories, setCategories] = useState([]);
-  const [popularProducts, setPopularProducts] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
 
   useEffect(() => {
     loadCategories();
-    loadPopularProducts();
+    requestLocation();
   }, []);
+
+  async function requestLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permissão de localização foi negada.');
+      return;
+    }
+    let currentLocation = await Location.getCurrentPositionAsync({});
+    setLocation(currentLocation);
+  }
 
   async function loadCategories() {
     try {
-      const response = await api.get("/categories");
-      setCategories(response.data);
+      // Mock categories while backend is unavailable
+      const mockCategories = [
+        { id: 1, name: "Mercados", icon: "basket", color: "#4FC3D0", totalItems: 12 },
+        { id: 2, name: "Farmácia", icon: "medkit", color: "#2563EB", totalItems: 8 },
+        { id: 3, name: "Padarias", icon: "cafe", color: "#22C55E", totalItems: 5 },
+      ];
+      setCategories(mockCategories);
     } catch (error) {
       console.log("Erro ao buscar categorias:", error);
-    }
-  }
-
-  async function loadPopularProducts() {
-    try {
-      const data = await getPopularProducts();
-      setPopularProducts(data);
-    } catch (error) {
-      console.log("Erro ao buscar produtos populares:", error);
     }
   }
 
@@ -46,16 +54,26 @@ export default function HomeScreen() {
       <HomeHeader />
 
       {/* BUSCA */}
-      <SearchInput />
+      <SearchInput value={searchQuery} onChangeText={setSearchQuery} />
 
-      {/* CARD PROMOCIONAL */}
-      <PromoCard />
+      {searchQuery.trim().length === 0 ? (
+        <>
+          {/* CARD PROMOCIONAL */}
+          <PromoCard />
 
-      {/* CATEGORIAS (HORIZONTAL) */}
-      <CategoryList data={categories} />
+          {/* CATEGORIAS (HORIZONTAL) */}
+          <CategoryList data={categories} />
 
-      {/* PRODUTOS POPULARES (VITRINE) */}
-      <PopularList data={popularProducts} />
+          {/* ESTABELECIMENTOS EM DESTAQUE (VITRINE) */}
+          <Text style={styles.sectionTitle}>Lojas e Estabelecimentos</Text>
+          <PopularList />
+        </>
+      ) : (
+        <>
+          <Text style={styles.sectionTitle}>Resultados da Busca</Text>
+          <PopularList searchQuery={searchQuery} />
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -65,5 +83,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9FAFB",
     paddingHorizontal: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#111827",
+    marginTop: 24,
+    marginBottom: 12,
   },
 });

@@ -9,7 +9,7 @@ import EstablishmentCategoriesScreen from "../screens/EstablishmentCategoriesScr
 import EstablishmentsByCategoryScreen from "../screens/EstablishmentsByCategoryScreen";
 import EstablishmentScreen from "../screens/EstablishmentScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
-import CartScreen from "../screens/CartScreen";
+import WalletScreen from "../screens/WalletScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import CouponDetailsScreen from "../screens/CouponDetailsScreen";
 
@@ -21,10 +21,10 @@ const Tab = createBottomTabNavigator();
 /* ------------------ STACK ----------------- */
 const Stack = createNativeStackNavigator();
 
-/* -------- BOTÃO CENTRAL (CARRINHO) -------- */
-function CartButton({ children, onPress }: any) {
+/* -------- BOTÃO CENTRAL (CARTEIRA) -------- */
+function WalletButton({ children, onPress }: any) {
   return (
-    <TouchableOpacity style={styles.cartButton} onPress={onPress}>
+    <TouchableOpacity style={styles.walletButton} onPress={onPress}>
       {children}
     </TouchableOpacity>
   );
@@ -69,12 +69,12 @@ function Tabs() {
       />
 
       <Tab.Screen
-        name="Cart"
-        component={CartScreen}
+        name="Wallet"
+        component={WalletScreen}
         options={{
-          tabBarButton: (props) => <CartButton {...props} />,
+          tabBarButton: (props) => <WalletButton {...props} />,
           tabBarIcon: () => (
-            <Ionicons name="cart" size={28} color="#fff" />
+            <Ionicons name="wallet" size={28} color="#fff" />
           ),
         }}
       />
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
 
-  cartButton: {
+  walletButton: {
     width: 64,
     height: 64,
     borderRadius: 32,

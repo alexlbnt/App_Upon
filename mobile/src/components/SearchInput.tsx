@@ -2,7 +2,12 @@ import { View, TextInput, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../theme/colors";
 
-export default function SearchInput() {
+interface SearchInputProps {
+  value: string;
+  onChangeText: (text: string) => void;
+}
+
+export default function SearchInput({ value, onChangeText }: SearchInputProps) {
   return (
     <View style={styles.container}>
       <Ionicons
@@ -16,6 +21,8 @@ export default function SearchInput() {
         placeholder="Busque por produtos ou estabelecimentos"
         placeholderTextColor={colors.muted}
         style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   );

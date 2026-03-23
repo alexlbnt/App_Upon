@@ -9,8 +9,11 @@ export class Category {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   icon: string;
+
+  @Column({ nullable: true })
+  color: string;
 
   @OneToMany(() => Establishment, establishment => establishment.category)
   establishments: Establishment[];

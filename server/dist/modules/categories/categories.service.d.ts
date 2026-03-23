@@ -1,8 +1,8 @@
+import { Repository } from 'typeorm';
+import { Category } from './category.entity';
 export declare class CategoriesService {
-    private categories;
-    findAll(): {
-        id: number;
-        name: string;
-        icon: string;
-    }[];
+    private readonly repo;
+    constructor(repo: Repository<Category>);
+    findAll(): Promise<Category[]>;
+    findOne(id: string): Promise<Category>;
 }

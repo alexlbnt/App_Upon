@@ -5,13 +5,18 @@ import { EstablishmentsService } from "./establishments.service";
 export class EstablishmentsController {
   constructor(private readonly service: EstablishmentsService) {}
 
+  @Get()
+  findAll() {
+    return this.service.findAll();
+  }
+
   @Get("by-category/:categoryId")
-  findByCategory(@Param("categoryId") categoryId: number) {
+  findByCategory(@Param("categoryId") categoryId: string) {
     return this.service.findByCategory(categoryId);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: number) {
+  findOne(@Param("id") id: string) {
     return this.service.findOne(id);
   }
 }

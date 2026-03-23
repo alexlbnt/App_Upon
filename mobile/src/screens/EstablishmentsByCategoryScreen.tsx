@@ -37,16 +37,35 @@ export default function EstablishmentsByCategoryScreen() {
 
   async function loadEstablishments() {
     try {
-      const response = await api.get(
-        `/establishments/by-category/${categoryId}`
-      );
-      setEstablishments(response.data);
+       // Mock Establishments while backend is unavailable
+       setTimeout(() => {
+          const mockEstablishments: Establishment[] = [
+            {
+              id: 1,
+              name: `Estabelecimento Exemplo (${categoryName})`,
+              description: "Descrição fantástica do local com as melhores ofertas da categoria.",
+              image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5",
+              distance: "1.2 km",
+              isOpen: true,
+            },
+            {
+              id: 2,
+              name: `Loja Parceira (${categoryName})`,
+              description: "Um lugar com várias opções e descontos imperdíveis.",
+              image: "https://images.unsplash.com/photo-1534723452862-4c874018d66d",
+              distance: "3.5 km",
+              isOpen: false,
+            }
+          ];
+          setEstablishments(mockEstablishments);
+          setLoading(false);
+       }, 500);
     } catch (error) {
       console.log("Erro ao buscar estabelecimentos:", error);
-    } finally {
       setLoading(false);
-    }
+    } 
   }
+
 
   if (loading) {
     return (

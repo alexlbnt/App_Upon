@@ -4,7 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import RootNavigator from "./navigation/RootNavigator";
 
 import { AuthProvider } from "./contexts/AuthContext";
-import { CartProvider } from "./contexts/CartContext";
+import { WalletProvider } from "./contexts/WalletContext";
 import { FavoritesProvider } from "./contexts/FavoritesContext";
 
 import { colors } from "./theme/colors";
@@ -13,12 +13,12 @@ export default function App() {
   return (
     <AuthProvider>
       <FavoritesProvider>
-        <CartProvider>
+        <WalletProvider>
           <SafeAreaView style={styles.container}>
             <StatusBar style="dark" backgroundColor={colors.background} />
             <RootNavigator />
           </SafeAreaView>
-        </CartProvider>
+        </WalletProvider>
       </FavoritesProvider>
     </AuthProvider>
   );

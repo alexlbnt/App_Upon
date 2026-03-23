@@ -1,50 +1,27 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Establishment } from "./establishment.entity";
 
 @Injectable()
 export class EstablishmentsService {
-  private establishments = [
-    {
-      id: 1,
-      categoryId: 1,
-      name: "Supermercado Bom Preço",
-      description: "Os melhores preços da cidade",
-      image:
-        "https://images.unsplash.com/photo-1580910051074-7b26f8c4e1f4",
-      distance: "1.2 km",
-      isOpen: true,
-      rating: 4.5,
-    },
-    {
-      id: 2,
-      categoryId: 1,
-      name: "Mercado Central",
-      description: "Variedade e qualidade",
-      image:
-        "https://images.unsplash.com/photo-1601600576337-c1d8a0d13747",
-      distance: "2.8 km",
-      isOpen: false,
-      rating: 4.2,
-    },
-    {
-      id: 3,
-      categoryId: 2,
-      name: "Padaria Pão Quente",
-      description: "Pães frescos todos os dias",
-      image:
-        "https://images.unsplash.com/photo-1608198093002-ad4e005484ec",
-      distance: "900 m",
-      isOpen: true,
-      rating: 4.8,
-    },
-  ];
+  constructor(
+    @InjectRepository(Establishment)
+    private readonly repo: Repository<Establishment>
+  ) {}
 
-  findByCategory(categoryId: number) {
-    return this.establishments.filter(
-      (e) => e.categoryId === Number(categoryId)
-    );
+  findAll() {
+    return this.repo.find({ relations: ["category", "coupons"] });
   }
 
-  findOne(id: number) {
-    return this.establishments.find((e) => e.id === Number(id));
+  findByCategory(categoryId: string) {
+    return this.repo.find({
+      where: { category: { id: categoryId } },
+      relations: ["category", "coupons"]
+    });
+  }
+
+  findOne(id: string) {
+    return this.repo.findOne({ where: { id }, relations: ["category", "coupons"] });
   }
 }

@@ -3,5 +3,6 @@ export declare class Category {
     id: string;
     name: string;
     icon: string;
+    color: string;
     establishments: Establishment[];
 }

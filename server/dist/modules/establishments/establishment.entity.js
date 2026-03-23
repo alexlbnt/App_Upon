@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Establishment = void 0;
 const typeorm_1 = require("typeorm");
 const category_entity_1 = require("../categories/category.entity");
+const coupon_entity_1 = require("../coupons/coupon.entity");
 let Establishment = class Establishment {
 };
 exports.Establishment = Establishment;
@@ -24,22 +25,38 @@ __decorate([
     __metadata("design:type", String)
 ], Establishment.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Establishment.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Establishment.prototype, "logo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: 0 }),
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Establishment.prototype, "image", void 0);
+__decorate([
+    (0, typeorm_1.Column)("decimal", { precision: 2, scale: 1, default: 0 }),
     __metadata("design:type", Number)
 ], Establishment.prototype, "rating", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Establishment.prototype, "isOpen", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], Establishment.prototype, "deliveryTime", void 0);
+], Establishment.prototype, "distance", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => category_entity_1.Category, category => category.establishments),
     (0, typeorm_1.JoinColumn)({ name: "category_id" }),
     __metadata("design:type", category_entity_1.Category)
 ], Establishment.prototype, "category", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => coupon_entity_1.Coupon, coupon => coupon.establishment),
+    __metadata("design:type", Array)
+], Establishment.prototype, "coupons", void 0);
 exports.Establishment = Establishment = __decorate([
     (0, typeorm_1.Entity)("establishments")
 ], Establishment);

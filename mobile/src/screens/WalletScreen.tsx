@@ -8,24 +8,32 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-import { useCart } from "../contexts/CartContext";
+import { useWallet } from "../contexts/WalletContext";
 import { colors } from "../theme/colors";
 
-export default function CartScreen() {
+export default function WalletScreen() {
   const navigation = useNavigation<any>();
-  const { items, removeItem, clearCart, total } = useCart();
+  const { items, removeCoupon, clearWallet, totalDiscountSaved } = useWallet();
+
+  // Agrupar itens por Estabelecimento (storeName)
+  const groupedItems = items.reduce((acc: any, item) => {
+    if (!acc[item.storeName]) {
+      acc[item.storeName] = [];
+    }
+    acc[item.storeName].push(item);
+    return acc;
+  }, {});
+
+  const stores = Object.keys(groupedItems);
 
   return (
     <View style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text} />
-        </TouchableOpacity>
-
-        <Text style={styles.title}>Meus Cupons</Text>
-
-        <View style={{ width: 24 }} />
+        <View style={styles.headerLeft}>
+          <Ionicons name="wallet-outline" size={24} color={colors.text} />
+          <Text style={styles.title}>Minha Carteira</Text>
+        </View>
       </View>
 
       {/* LISTA */}
@@ -34,37 +42,49 @@ export default function CartScreen() {
           <Ionicons name="ticket-outline" size={48} color="#9CA3AF" />
           <Text style={styles.emptyTitle}>Nenhum cupom salvo</Text>
           <Text style={styles.emptyText}>
-            Adicione cupons para usar no estabelecimento
+            Adicione cupons para utilizá-los no estabelecimento.
           </Text>
         </View>
       ) : (
         <>
           <FlatList
-            data={items}
-            keyExtractor={(item) => item.id.toString()}
+            data={stores}
+            keyExtractor={(store) => store}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingBottom: 220, // espaço real pro footer fixo
+              paddingBottom: 220,
             }}
-            renderItem={({ item }) => (
-              <View style={styles.item}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemPrice}>
-                    R$ {item.price.toFixed(2).replace(".", ",")}
-                  </Text>
-                  <Text style={styles.itemHint}>
-                    Cupom válido no estabelecimento
-                  </Text>
+            renderItem={({ item: storeName }) => (
+              <View style={styles.storeGroup}>
+                <View style={styles.storeHeader}>
+                  <Ionicons name="storefront-outline" size={18} color={colors.primary} />
+                  <Text style={styles.storeName}>{storeName}</Text>
                 </View>
 
-                <TouchableOpacity onPress={() => removeItem(item.id)}>
-                  <Ionicons
-                    name="trash-outline"
-                    size={20}
-                    color="#DC2626"
-                  />
-                </TouchableOpacity>
+                {groupedItems[storeName].map((coupon: any) => (
+                  <View key={coupon.id} style={styles.item}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.itemName}>{coupon.name}</Text>
+                      {coupon.discountValue ? (
+                        <Text style={styles.itemDiscount}>
+                          Economia: R$ {coupon.discountValue.toFixed(2).replace(".", ",")}
+                        </Text>
+                      ) : (
+                        <Text style={styles.itemPrice}>
+                          R$ {coupon.price?.toFixed(2).replace(".", ",")}
+                        </Text>
+                      )}
+                    </View>
+
+                    <TouchableOpacity onPress={() => removeCoupon(coupon.id)}>
+                      <Ionicons
+                        name="trash-outline"
+                        size={20}
+                        color="#DC2626"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </View>
             )}
           />
@@ -72,31 +92,31 @@ export default function CartScreen() {
           {/* FOOTER FIXO */}
           <View style={styles.footer}>
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Total em descontos</Text>
+              <Text style={styles.totalLabel}>Descontos Acumulados</Text>
               <Text style={styles.totalValue}>
-                R$ {total.toFixed(2).replace(".", ",")}
+                R$ {totalDiscountSaved.toFixed(2).replace(".", ",")}
               </Text>
             </View>
 
             <TouchableOpacity
-              style={styles.checkoutButton}
-              onPress={() => navigation.navigate("UseCoupons")}
+              style={styles.useButton}
+              onPress={() => navigation.navigate("ValidateCoupons")}
               activeOpacity={0.9}
             >
-              <Text style={styles.checkoutText}>
-                Usar cupons no estabelecimento
+              <Text style={styles.useText}>
+                Exibir QR Code para Validação
               </Text>
             </TouchableOpacity>
 
             <Text style={styles.footerHint}>
-              Apresente seus cupons no local para garantir o desconto
+              Apresente os cupons no caixa para garantir seus descontos.
             </Text>
 
             <TouchableOpacity
               style={styles.clearButton}
-              onPress={clearCart}
+              onPress={clearWallet}
             >
-              <Text style={styles.clearText}>Remover todos os cupons</Text>
+              <Text style={styles.clearText}>Limpar Carteira</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -118,6 +138,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+
+  headerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 
   title: {
@@ -147,15 +173,35 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 
+  storeGroup: {
+    marginBottom: 20,
+  },
+
+  storeHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    gap: 6,
+  },
+
+  storeName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: colors.text,
+  },
+
   item: {
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 14,
     marginHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
   },
 
   itemName: {
@@ -171,16 +217,17 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  itemHint: {
-    fontSize: 11,
-    color: "#6B7280",
-    marginTop: 2,
+  itemDiscount: {
+    fontSize: 12,
+    color: "#16A34A",
+    marginTop: 4,
+    fontWeight: "700",
   },
 
   /* FOOTER FIXO */
   footer: {
     position: "absolute",
-    bottom: 90, // respeita BottomTab
+    bottom: 90, 
     left: 0,
     right: 0,
     backgroundColor: "#fff",
@@ -198,22 +245,23 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: 15,
     fontWeight: "600",
+    color: "#16A34A",
   },
 
   totalValue: {
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.primary,
+    fontWeight: "800",
+    color: "#16A34A",
   },
 
-  checkoutButton: {
+  useButton: {
     backgroundColor: colors.primary,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: "center",
   },
 
-  checkoutText: {
+  useText: {
     color: "#fff",
     fontWeight: "700",
     fontSize: 14,

@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type FavoriteEstablishment = {
   id: number;
@@ -21,6 +22,29 @@ const FavoritesContext = createContext<FavoritesContextData>(
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<FavoriteEstablishment[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadFavorites() {
+      try {
+        const stored = await AsyncStorage.getItem("@upon:favorites");
+        if (stored) {
+          setFavorites(JSON.parse(stored));
+        }
+      } catch (err) {
+        console.error("Erro ao carregar favoritos:", err);
+      } finally {
+        setIsLoaded(true);
+      }
+    }
+    loadFavorites();
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      AsyncStorage.setItem("@upon:favorites", JSON.stringify(favorites));
+    }
+  }, [favorites, isLoaded]);
 
   function toggleFavorite(establishment: FavoriteEstablishment) {
     setFavorites((prev) => {
